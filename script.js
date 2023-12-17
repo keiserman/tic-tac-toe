@@ -1,6 +1,5 @@
 const Gameboard = (() => {
-  const rows = 3;
-  const cols = 3;
+  const dimensions = 3;
   const board = [];
 
   const getBoard = () => board;
@@ -8,9 +7,9 @@ const Gameboard = (() => {
     console.log(board.map((row) => row.map((cell) => cell.getCell())));
   };
 
-  for (let i = 0; i < rows; i++) {
+  for (let i = 0; i < dimensions; i++) {
     board[i] = [];
-    for (let j = 0; j < cols; j++) {
+    for (let j = 0; j < dimensions; j++) {
       board[i].push(Cell());
     }
   }
@@ -35,9 +34,9 @@ function Player(id, name) {
 
 function gameController() {
   const board = Gameboard.getBoard();
-  board[0][0].setMove(1);
-  board[0][1].setMove(1);
-  board[0][2].setMove(1);
+  board[0][0].setMove(2);
+  board[1][1].setMove(2);
+  board[2][2].setMove(2);
   console.log(checkWin(board));
   Gameboard.displayBoard();
 }
@@ -59,15 +58,19 @@ function checkWin(board) {
     });
   };
 
-  const condition2 = (board) => {
+  const colMatches = (board) => {
+    for (let i = 0; i < board[0].length; i++) {
+      const cells = board.map((row) => row[i].getCell());
+      if (sequenceMatch(cells)) return true;
+    }
     return false;
   };
 
-  const condition3 = (board) => {
-    return false;
+  const diagonalMatches = (board) => {
+    for (let i = 0; i < board.length; i++) {}
   };
 
-  if (rowMatches(board) || condition2(board) || condition3(board)) {
+  if (rowMatches(board) || colMatches(board) || diagonalMatches(board)) {
     return true;
   } else {
     return false;
