@@ -3,6 +3,11 @@ const Gameboard = (() => {
   const cols = 3;
   const board = [];
 
+  const getBoard = () => board;
+  const displayBoard = () => {
+    console.log(board.map((row) => row.map((cell) => cell.getCell())));
+  };
+
   for (let i = 0; i < rows; i++) {
     board[i] = [];
     for (let j = 0; j < cols; j++) {
@@ -10,69 +15,48 @@ const Gameboard = (() => {
     }
   }
 
-  const getBoard = () => {
-    return board;
-  };
-
-  const displayBoard = () => {
-    const boardWithCellValues = board.map((row) =>
-      row.map((cell) => cell.getCell())
-    );
-    console.log(boardWithCellValues);
-  };
-
   return { getBoard, displayBoard };
 })();
 
 function Cell() {
   let cell = 0;
-
-  const setMove = (move) => {
-    cell = move;
-  };
-
-  const getCell = () => {
-    return cell;
-  };
-
+  const setMove = (move) => (cell = move);
+  const getCell = () => cell;
   return { setMove, getCell };
 }
 
 function Player(id, name) {
   let playerId = id;
   let playerName = name;
-
   const getId = () => playerId;
   const getName = () => playerName;
-
   return { getId, getName };
 }
 
 function gameController() {
   const board = Gameboard.getBoard();
-  const players = [Player(1, "Kevin"), Player(2, "Computer")];
-
   board[0][0].setMove(1);
   board[0][1].setMove(1);
   board[0][2].setMove(1);
-
   console.log(checkWin(board));
-
   Gameboard.displayBoard();
 }
 
 function checkWin(board) {
-  const condition1 = (board) => {
-    for (let rowIndex = 0; rowIndex < board.length; rowIndex++) {
-      const row = board[rowIndex];
-      let firstCell = row[0].getCell();
-      for (let i = 1; i < row.length; i++) {
-        let currentCell = row[i].getCell();
-        if (currentCell === 0) break;
-        if (currentCell !== firstCell) break;
-        if (i === row.length - 1) return true;
-      }
+  function sequenceMatch(array) {
+    let firstCell = array[0];
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] === 0) return false;
+      if (array[i] !== firstCell) return false;
     }
+    return true;
+  }
+
+  const rowMatches = (board) => {
+    return board.some((row) => {
+      const cells = row.map((cell) => cell.getCell());
+      return sequenceMatch(cells);
+    });
   };
 
   const condition2 = (board) => {
@@ -83,7 +67,7 @@ function checkWin(board) {
     return false;
   };
 
-  if (condition1(board) || condition2(board) || condition3(board)) {
+  if (rowMatches(board) || condition2(board) || condition3(board)) {
     return true;
   } else {
     return false;
