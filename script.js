@@ -34,9 +34,9 @@ function Player(id, name) {
 
 function gameController() {
   const board = Gameboard.getBoard();
-  board[0][0].setMove(2);
-  board[1][1].setMove(2);
-  board[2][2].setMove(2);
+  board[0][2].setMove(1);
+  board[1][1].setMove(1);
+  board[2][0].setMove(1);
   console.log(checkWin(board));
   Gameboard.displayBoard();
 }
@@ -51,14 +51,14 @@ function checkWin(board) {
     return true;
   }
 
-  const rowMatches = (board) => {
+  const rowMatch = (board) => {
     return board.some((row) => {
       const cells = row.map((cell) => cell.getCell());
       return sequenceMatch(cells);
     });
   };
 
-  const colMatches = (board) => {
+  const colMatch = (board) => {
     for (let i = 0; i < board[0].length; i++) {
       const cells = board.map((row) => row[i].getCell());
       if (sequenceMatch(cells)) return true;
@@ -66,11 +66,17 @@ function checkWin(board) {
     return false;
   };
 
-  const diagonalMatches = (board) => {
-    for (let i = 0; i < board.length; i++) {}
+  const diagonalMatch = (board) => {
+    const cells = [];
+    const cellsReverse = [];
+    for (let i = 0; i < board.length; i++) {
+      cells.push(board[i][i].getCell());
+      cellsReverse.push(board[i][board.length - i - 1].getCell());
+    }
+    return sequenceMatch(cells) || sequenceMatch(cellsReverse) ? true : false;
   };
 
-  if (rowMatches(board) || colMatches(board) || diagonalMatches(board)) {
+  if (rowMatch(board) || colMatch(board) || diagonalMatch(board)) {
     return true;
   } else {
     return false;
